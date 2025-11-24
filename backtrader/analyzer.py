@@ -56,17 +56,17 @@ class MetaAnalyzer(bt.MetaParams):
             for l, line in enumerate(data.lines):
                 linealias = data._getlinealias(l)
                 if linealias:
-                    setattr(_obj, 'data_%s' % linealias, line)
-                setattr(_obj, 'data_%d' % l, line)
+                    setattr(_obj, f'data_{linealias}', line)
+                setattr(_obj, f'data_{l}', line)
 
             for d, data in enumerate(_obj.datas):
-                setattr(_obj, 'data%d' % d, data)
+                setattr(_obj, f'data{d}', data)
 
                 for l, line in enumerate(data.lines):
                     linealias = data._getlinealias(l)
                     if linealias:
-                        setattr(_obj, 'data%d_%s' % (d, linealias), line)
-                    setattr(_obj, 'data%d_%d' % (d, l), line)
+                        setattr(_obj, f'data{d}_{linealias}', line)
+                    setattr(_obj, f'data{d}_{l}', line)
 
         _obj.create_analysis()
 

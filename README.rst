@@ -118,33 +118,27 @@ List of built-in Indicators (122)
 Python Support
 ==============
 
-  - Python >= ``3.9`` (tested regularly on ``3.9`` to ``3.12``)
-
+  - Python >= ``3.9`` (tested on ``3.9`` to ``3.12``)
   - PyPy is not part of the current test matrix
 
 Installation
 ============
 
-``backtrader`` is self-contained with no external dependencies (unless you opt
-into extras like plotting or pandas data handling).
+``backtrader`` is self-contained with no mandatory dependencies. Optional
+extras enable plotting and specific data sources.
 
 With ``uv`` (recommended):
 
   - ``uv pip install backtrader``
-
-  - ``uv pip install "backtrader[plotting]"`` for matplotlib-based plotting
-
+  - ``uv pip install "backtrader[plotting]"`` for matplotlib plotting
   - ``uv pip install "backtrader[pandas]"`` for pandas data feeds
-
-  - ``uv pip install "backtrader[calendars]"`` if you need exchange calendars
-
+  - ``uv pip install "backtrader[calendars]"`` for exchange calendars
   - ``uv pip install "backtrader[talib]"`` for TA-Lib indicators (requires the
-    TA-Lib native library on your system)
+    TA-Lib native library)
 
 With ``pip``:
 
   - ``pip install backtrader``
-
   - ``pip install "backtrader[plotting]"``
 
 .. note:: Matplotlib ``>=3.7`` is recommended when using plotting.
@@ -166,15 +160,14 @@ From source:
 
   - ``uv pip install -e .`` to install in editable mode for development
 
-Version numbering
-=================
+Extras overview
+===============
 
-X.Y.Z.I
+  - ``plotting``: matplotlib-based charts
+  - ``pandas``: ingest data from pandas DataFrame/Series
+  - ``calendars``: exchange calendars via ``pandas-market-calendars``
+  - ``talib``: TA-Lib indicator bindings (requires native TA-Lib)
 
-  - X: Major version number. Should stay stable unless something big is changed
-    like an overhaul to use ``numpy``
-  - Y: Minor version number. To be changed upon adding a complete new feature or
-    (god forbids) an incompatible API change.
-  - Z: Revision version number. To be changed for documentation updates, small
-    changes, small bug fixes
-  - I: Number of Indicators already built into the platform
+From source:
+
+  - ``uv pip install -e .`` to install in editable mode for development

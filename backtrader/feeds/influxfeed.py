@@ -64,7 +64,7 @@ class InfluxDB(feed.DataBase):
             self.ndb = idbclient(self.p.host, self.p.port, self.p.username,
                                  self.p.password, self.p.database)
         except InfluxDBClientError as err:
-            print('Failed to establish connection to InfluxDB: %s' % err)
+            print(f'Failed to establish connection to InfluxDB: {err}')
 
         tf = '{multiple}{timeframe}'.format(
             multiple=(self.p.compression if self.p.compression else 1),
@@ -73,7 +73,7 @@ class InfluxDB(feed.DataBase):
         if not self.p.startdate:
             st = '<= now()'
         else:
-            st = '>= \'%s\'' % self.p.startdate
+            st = f">= '{self.p.startdate}'"
 
         # The query could already consider parameters like fromdate and todate
         # to have the database skip them and not the internal code
@@ -91,7 +91,7 @@ class InfluxDB(feed.DataBase):
         try:
             dbars = list(self.ndb.query(qstr).get_points())
         except InfluxDBClientError as err:
-            print('InfluxDB query failed: %s' % err)
+            print(f'InfluxDB query failed: {err}')
 
         self.biter = iter(dbars)
 

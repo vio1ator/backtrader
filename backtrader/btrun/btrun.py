@@ -350,7 +350,7 @@ def getobjects(iterable, clsbase, modbase, issignal=False):
 
             if not mod:
                 print('')
-                print('Failed to load module %s:' % modpath, e)
+                print(f'Failed to load module {modpath}:', e)
                 sys.exit(1)
         else:
             mod = modbase
@@ -358,7 +358,7 @@ def getobjects(iterable, clsbase, modbase, issignal=False):
         loaded = getmodclasses(mod=mod, clstype=clsbase, clsname=name)
 
         if not loaded:
-            print('No class %s / module %s' % (str(name), modpath))
+            print(f'No class {name} / module {modpath}')
             sys.exit(1)
 
         if issignal:
@@ -394,7 +394,7 @@ def getfunctions(iterable, modbase):
 
             if not mod:
                 print('')
-                print('Failed to load module %s:' % modpath, e)
+                print(f'Failed to load module {modpath}:', e)
                 sys.exit(1)
         else:
             mod = modbase
@@ -402,7 +402,7 @@ def getfunctions(iterable, modbase):
         loaded = getmodfunctions(mod=mod, funcname=name)
 
         if not loaded:
-            print('No function %s / module %s' % (str(name), modpath))
+            print(f'No function {name} / module {modpath}')
             sys.exit(1)
 
         retfunctions.append((loaded[0], kwargs))
