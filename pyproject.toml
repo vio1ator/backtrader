@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backtrader"
+dynamic = ["version"]
+description = "BackTesting Engine"
+readme = "README.rst"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [{ name = "Daniel Rodriguez", email = "danjrod@gmail.com" }]
+keywords = ["trading", "development"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Topic :: Office/Business :: Financial",
+    "Topic :: Software Development",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.optional-dependencies]
+plotting = ["matplotlib>=3.7"]
+pandas = ["pandas>=1.5"]
+calendars = ["pandas>=1.5", "pandas-market-calendars>=4.3"]
+talib = ["TA-Lib>=0.4.24"]
+dev = ["pytest>=7.4", "build>=1.1", "twine>=4.0"]
+
+[project.urls]
+Homepage = "https://www.backtrader.com"
+Documentation = "http://www.backtrader.com/docu"
+Repository = "https://github.com/mementum/backtrader"
+Changelog = "https://github.com/mementum/backtrader/blob/master/changelog.txt"
+
+[project.scripts]
+btrun = "backtrader.btrun:btrun"
+bt-run = "backtrader.btrun:btrun"
+
+[tool.setuptools]
+packages = { find = { exclude = ["docs", "docs2", "samples"] } }
+
+[tool.setuptools.dynamic]
+version = { attr = "backtrader.version.__version__" }
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.4",
+    "build>=1.1",
+    "twine>=4.0",
+]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+    "ignore::FutureWarning",
+]

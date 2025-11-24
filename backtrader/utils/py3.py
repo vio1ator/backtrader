@@ -18,106 +18,73 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
-import itertools
+import builtins
 import sys
+from io import StringIO
+from urllib.parse import quote as urlquote
+from urllib.request import ProxyHandler, build_opener, install_opener, urlopen
 
-PY2 = sys.version_info.major == 2
+try:
+    import winreg
+except ImportError:
+    winreg = None
+
+import queue as queue
+
+PY2 = False
+
+MAXINT = sys.maxsize
+MININT = -sys.maxsize - 1
+
+MAXFLOAT = sys.float_info.max
+MINFLOAT = sys.float_info.min
+
+string_types = (str,)
+integer_types = (int,)
+
+filter = builtins.filter
+map = builtins.map
+range = builtins.range
+zip = builtins.zip
+long = int
 
 
-if PY2:
-    try:
-        import _winreg as winreg
-    except ImportError:
-        winreg = None
+def cmp(a, b):
+    return (a > b) - (a < b)
 
-    MAXINT = sys.maxint
-    MININT = -sys.maxint - 1
 
-    MAXFLOAT = sys.float_info.max
-    MINFLOAT = sys.float_info.min
+def bytes(x):
+    if isinstance(x, str):
+        return x.encode('utf-8')
+    return builtins.bytes(x)
 
-    string_types = str, unicode
-    integer_types = int, long
 
-    filter = itertools.ifilter
-    map = itertools.imap
-    range = xrange
-    zip = itertools.izip
-    long = long
+def bstr(x):
+    return str(x)
 
-    cmp = cmp
 
-    bytes = bytes
-    bstr = bytes
+def iterkeys(d):
+    return iter(d.keys())
 
-    from io import StringIO
 
-    from urllib2 import urlopen, ProxyHandler, build_opener, install_opener
-    from urllib import quote as urlquote
+def itervalues(d):
+    return iter(d.values())
 
-    def iterkeys(d): return d.iterkeys()
 
-    def itervalues(d): return d.itervalues()
+def iteritems(d):
+    return iter(d.items())
 
-    def iteritems(d): return d.iteritems()
 
-    def keys(d): return d.keys()
+def keys(d):
+    return list(d.keys())
 
-    def values(d): return d.values()
 
-    def items(d): return d.items()
+def values(d):
+    return list(d.values())
 
-    import Queue as queue
 
-else:
-    try:
-        import winreg
-    except ImportError:
-        winreg = None
-
-    MAXINT = sys.maxsize
-    MININT = -sys.maxsize - 1
-
-    MAXFLOAT = sys.float_info.max
-    MINFLOAT = sys.float_info.min
-
-    string_types = str,
-    integer_types = int,
-
-    filter = filter
-    map = map
-    range = range
-    zip = zip
-    long = int
-
-    def cmp(a, b): return (a > b) - (a < b)
-
-    def bytes(x): return x.encode('utf-8')
-
-    def bstr(x): return str(x)
-
-    from io import StringIO
-
-    from urllib.request import (urlopen, ProxyHandler, build_opener,
-                                install_opener)
-    from urllib.parse import quote as urlquote
-
-    def iterkeys(d): return iter(d.keys())
-
-    def itervalues(d): return iter(d.values())
-
-    def iteritems(d): return iter(d.items())
-
-    def keys(d): return list(d.keys())
-
-    def values(d): return list(d.values())
-
-    def items(d): return list(d.items())
-
-    import queue as queue
+def items(d):
+    return list(d.items())
 
 
 # This is from Armin Ronacher from Flash simplified later by six

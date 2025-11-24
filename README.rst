@@ -15,10 +15,10 @@ backtrader
    :alt: License
    :scale: 100%
    :target: https://github.com/backtrader/backtrader/blob/master/LICENSE
-.. image:: https://travis-ci.org/backtrader/backtrader.png?branch=master
-   :alt: Travis-ci Build Status
+.. image:: https://github.com/mementum/backtrader/actions/workflows/ci.yml/badge.svg?branch=master
+   :alt: GitHub Actions Build Status
    :scale: 100%
-   :target: https://travis-ci.org/backtrader/backtrader
+   :target: https://github.com/mementum/backtrader/actions/workflows/ci.yml
 .. image:: https://img.shields.io/pypi/pyversions/backtrader.svg
    :alt: Python versions
    :scale: 100%
@@ -115,29 +115,39 @@ List of built-in Indicators (122)
 
   - `Indicators Reference <http://www.backtrader.com/docu/indautoref.html>`_
 
-Python 2/3 Support
-==================
+Python Support
+==============
 
-  - Python >= ``3.2``
+  - Python >= ``3.9`` (tested regularly on ``3.9`` to ``3.12``)
 
-  - It also works with ``pypy`` and ``pypy3`` (no plotting - ``matplotlib`` is
-    not supported under *pypy*)
+  - PyPy is not part of the current test matrix
 
 Installation
 ============
 
-``backtrader`` is self-contained with no external dependencies (except if you
-want to plot)
+``backtrader`` is self-contained with no external dependencies (unless you opt
+into extras like plotting or pandas data handling).
 
-From *pypi*:
+With ``uv`` (recommended):
+
+  - ``uv pip install backtrader``
+
+  - ``uv pip install "backtrader[plotting]"`` for matplotlib-based plotting
+
+  - ``uv pip install "backtrader[pandas]"`` for pandas data feeds
+
+  - ``uv pip install "backtrader[calendars]"`` if you need exchange calendars
+
+  - ``uv pip install "backtrader[talib]"`` for TA-Lib indicators (requires the
+    TA-Lib native library on your system)
+
+With ``pip``:
 
   - ``pip install backtrader``
 
-  - ``pip install backtrader[plotting]``
+  - ``pip install "backtrader[plotting]"``
 
-    If ``matplotlib`` is not installed and you wish to do some plotting
-
-.. note:: The minimum matplotlib version is ``1.4.1``
+.. note:: Matplotlib ``>=3.7`` is recommended when using plotting.
 
 An example for *IB* Data Feeds/Trading:
 
@@ -154,7 +164,7 @@ the dependencies in the documentation.
 
 From source:
 
-  - Place the *backtrader* directory found in the sources inside your project
+  - ``uv pip install -e .`` to install in editable mode for development
 
 Version numbering
 =================

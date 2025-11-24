@@ -18,8 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 ###############################################################################
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 from collections import OrderedDict
 import itertools
@@ -120,7 +118,7 @@ class AutoInfoClass(object):
         info2add.update(info)
 
         clsmodule = sys.modules[cls.__module__]
-        newclsname = str(cls.__name__ + '_' + name)  # str - Python 2/3 compat
+        newclsname = f'{cls.__name__}_{name}'
 
         # This loop makes sure that if the name has already been defined, a new
         # unique name is found. A collision example is in the plotlines names

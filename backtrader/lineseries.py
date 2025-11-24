@@ -28,8 +28,6 @@ lines at once.
 .. moduleauthor:: Daniel Rodriguez
 
 '''
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 import sys
 
@@ -131,13 +129,13 @@ class Lines(object):
         clsextralines = baseextralines + extralines
         lines2add = obaseslines + lines
 
-        # str for Python 2/3 compatibility
         basecls = cls if not linesoverride else Lines
 
-        newcls = type(str(cls.__name__ + '_' + name), (basecls,), {})
+        newclsname = f'{cls.__name__}_{name}'
+        newcls = type(newclsname, (basecls,), {})
         clsmodule = sys.modules[cls.__module__]
         newcls.__module__ = cls.__module__
-        setattr(clsmodule, str(cls.__name__ + '_' + name), newcls)
+        setattr(clsmodule, newclsname, newcls)
 
         setattr(newcls, '_getlinesbase', classmethod(lambda cls: baselines))
         setattr(newcls, '_getlines', classmethod(lambda cls: clslines))

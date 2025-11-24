@@ -1,7 +1,7 @@
 #!/bin/sh
-#
-# Generate pypi wheels universal package and upload
-#
-rm dist/*
-python setup.py bdist_wheel --universal
-twine upload dist/*
+# Build and upload using uv and Twine
+set -euo pipefail
+
+rm -rf dist
+uv build
+uv run --with twine twine upload dist/*
