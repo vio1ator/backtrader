@@ -33,6 +33,7 @@ plotting = ["matplotlib>=3.7"]
 pandas = ["pandas>=1.5"]
 calendars = ["pandas>=1.5", "pandas-market-calendars>=4.3"]
 talib = ["TA-Lib>=0.4.24"]
+yahoo = ["yfinance>=0.2.40"]
 dev = ["pytest>=7.4", "build>=1.1", "twine>=4.0"]
 
 [project.urls]

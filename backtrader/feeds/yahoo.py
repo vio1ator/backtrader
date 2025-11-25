@@ -237,6 +237,12 @@ class YahooFinanceData(YahooFinanceCSVData):
         Number of times (each) to try to get a ``crumb`` cookie and download
         the data
 
+      - ``useyfinance`` (default: ``True``)
+
+        Use the ``yfinance`` package to fetch data instead of Yahoo's crumb
+        mechanism. Install with ``pip install backtrader[yahoo]``. Set to
+        ``False`` to force the legacy downloader.
+
       '''
 
     params = (
@@ -246,6 +252,7 @@ class YahooFinanceData(YahooFinanceCSVData):
         ('urlhist', 'https://finance.yahoo.com/quote/{}/history'),
         ('urldown', 'https://query1.finance.yahoo.com/v7/finance/download'),
         ('retries', 3),
+        ('useyfinance', True),
     )
 
     def start_v7(self):
@@ -267,6 +274,9 @@ class YahooFinanceData(YahooFinanceCSVData):
         crumb = None
         sess = requests.Session()
         sess.headers['User-Agent'] = 'backtrader'
+        # Avoid gzip-encoded responses that sometimes arrive with bad headers
+        # and cause decoding errors in requests/urllib3
+        sess.headers['Accept-Encoding'] = 'identity'
         for i in range(self.p.retries + 1):  # at least once
             resp = sess.get(url, **sesskwargs)
             if resp.status_code != requests.codes.ok:
@@ -347,8 +357,85 @@ class YahooFinanceData(YahooFinanceCSVData):
 
         self.f = f
 
+    def start_yfinance(self):
+        try:
+            import yfinance as yf
+        except ImportError as exc:
+            msg = ('YahooFinanceData requires the optional yfinance '
+                   "dependency. Install with 'pip install backtrader[yahoo]' "
+                   'or set useyfinance=False to use the legacy downloader.')
+            raise ImportError(msg) from exc
+
+        session = None
+        if self.p.proxies:
+            try:
+                import requests
+            except ImportError:
+                session = None
+            else:
+                session = requests.Session()
+                session.proxies.update(self.p.proxies)
+                session.headers['User-Agent'] = 'backtrader'
+                session.headers['Accept-Encoding'] = 'identity'
+
+        intervals = {
+            bt.TimeFrame.Days: '1d',
+            bt.TimeFrame.Weeks: '1wk',
+            bt.TimeFrame.Months: '1mo',
+        }
+
+        try:
+            interval = intervals[self.p.timeframe]
+        except KeyError:
+            raise ValueError('YahooFinanceData with yfinance only supports '
+                             'timeframes Days/Weeks/Months')
+
+        if self.p.compression not in (0, 1, None):
+            raise ValueError('YahooFinanceData with yfinance does not support '
+                             'compression != 1')
+
+        start = self.p.fromdate.date() if self.p.fromdate else None
+        end = self.p.todate.date() if self.p.todate else None
+
+        df = yf.download(
+            self.p.dataname,
+            start=start,
+            end=end,
+            interval=interval,
+            auto_adjust=False,
+            actions=False,
+            progress=False,
+            threads=False,
+            session=session,
+        )
+
+        if df is None or df.empty:
+            self.error = 'No data returned from yfinance for %s' % self.p.dataname
+            self.f = None
+            return
+
+        df = df.copy()
+        if df.index.tz is not None:
+            df.index = df.index.tz_convert(None)
+
+        df = df.reset_index()
+        # Ensure expected column ordering for CSV parser
+        expected_cols = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+        missing = [c for c in expected_cols if c not in df.columns]
+        if missing:
+            raise ValueError('Missing columns from yfinance data: %s' % ', '.join(missing))
+
+        df = df[expected_cols]
+        csv_buffer = io.StringIO(newline=None)
+        df.to_csv(csv_buffer, index=False)
+        csv_buffer.seek(0)
+        self.f = csv_buffer
+
     def start(self):
-        self.start_v7()
+        if self.p.useyfinance:
+            self.start_yfinance()
+        else:
+            self.start_v7()
 
         # Prepared a "path" file -  CSV Parser can take over
         super(YahooFinanceData, self).start()
