@@ -19,10 +19,11 @@
 #
 ###############################################################################
 
-import datetime
 import collections
+import datetime
 import itertools
 import multiprocessing
+import time
 
 try:  # For new Python versions
     collectionsAbc = collections.abc  # collections.Iterable -> collections.abc.Iterable
@@ -1538,10 +1539,10 @@ class Cerebro(with_metaclass(MetaParams, object)):
             # record starting time and tell feeds to discount the elapsed time
             # from the qcheck value
             drets = []
-            qstart = datetime.datetime.now(datetime.UTC)
+            qstart = time.perf_counter()
             for d in datas:
-                qlapse = datetime.datetime.now(datetime.UTC) - qstart
-                d.do_qcheck(newqcheck, qlapse.total_seconds())
+                qlapse = time.perf_counter() - qstart
+                d.do_qcheck(newqcheck, qlapse)
                 drets.append(d.next(ticks=False))
 
             d0ret = any((dret for dret in drets))

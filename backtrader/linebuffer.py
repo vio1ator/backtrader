@@ -32,6 +32,7 @@ with appends, forwarding, rewinding, resetting and other
 import array
 import collections
 import datetime
+from functools import partial
 from itertools import islice
 import math
 
@@ -776,9 +777,11 @@ class LinesOperation(LineActions):
         srcb = self.b
         op = self.operation
         tz = self._tz
+        converter = num2date if tz is None else partial(num2date, tz=tz)
+        to_time = converter
 
         for i in range(start, end):
-            dst[i] = op(num2date(srca[i], tz=tz).time(), srcb)
+            dst[i] = op(to_time(srca[i]).time(), srcb)
 
     def _once_val_op(self, start, end):
         # cache python dictionary lookups
