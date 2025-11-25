@@ -414,11 +414,17 @@ class YahooFinanceData(YahooFinanceCSVData):
             self.f = None
             return
 
+        # yfinance returns MultiIndex columns by default: (field, ticker)
+        if isinstance(df.columns, tuple) or getattr(df.columns, 'nlevels', 1) > 1:
+            df.columns = [c[0] if isinstance(c, tuple) else c for c in df.columns]
+
         df = df.copy()
         if df.index.tz is not None:
             df.index = df.index.tz_convert(None)
 
         df = df.reset_index()
+        # Drop rows without a valid date (can appear from multilevel headers)
+        df = df[df['Date'].notna()]
         # Ensure expected column ordering for CSV parser
         expected_cols = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
         missing = [c for c in expected_cols if c not in df.columns]
